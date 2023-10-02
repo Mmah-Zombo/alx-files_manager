@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
-import redis from 'redis';
 import { promisify } from 'util';
+import redis from 'redis';
 
 class RedisClient {
   constructor() {
