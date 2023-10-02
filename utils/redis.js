@@ -1,31 +1,31 @@
 /* eslint-disable linebreak-style */
-import { createClient } from 'redis';
+import redis from 'redis';
+import { promisify } from 'util';
 
 class RedisClient {
   constructor() {
-    this.client = createClient()
-      .on('error', (err) => {
-        console.log(err);
-      });
+    this.client = redis.createClient();
+    this.client.connected = true;
+    this.client.on('error', (err) => {
+      console.log(err.message);
+      this.client.connected = false;
+    });
   }
 
   isAlive() {
     return this.client.connected;
   }
 
-  async get(value) {
-    const data = await this.client.GET(value);
-    return data;
+  async get(key) {
+    return promisify(this.client.GET).bind(this.client)(key);
   }
 
   async set(key, value, duration) {
-    await this.client.SETEX(key, value, duration);
-    const data = await this.client.GET(key);
-    return data;
+    return promisify(this.client.SETEX).bind(this.client)(key, duration, value);
   }
 
   async del(key) {
-    this.client.DEL(key);
+    return promisify(this.client.DEL).bind(this.client)(key);
   }
 }
 
