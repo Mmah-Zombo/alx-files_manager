@@ -1,9 +1,9 @@
 /* eslint-disable linebreak-style */
-const redis = require('redis');
+import { createClient } from 'redis';
 
 class RedisClient {
   constructor() {
-    this.client = redis.createClient()
+    this.client = createClient()
       .on('error', (err) => {
         console.log(err);
       });
